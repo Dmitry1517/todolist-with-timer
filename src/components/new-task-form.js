@@ -12,7 +12,9 @@ import PropTypes from "prop-types";
 
 export default class NewTaskForm extends Component {
   state = {
-    label: ""
+    label: "",
+    labelMin: "",
+    labelSec: ""
   };
 
   onLabelChange = (event) => {
@@ -21,19 +23,35 @@ export default class NewTaskForm extends Component {
     });
   };
 
+  onLabelMinChange = (event) => {
+    this.setState({
+      labelMin: event.target.value
+    });
+  };
+
+  onLabelSecChange = (event) => {
+    this.setState({
+      labelSec: event.target.value
+    });
+  };
+
   onSubmit = (event) => {
     const { addItem } = this.props;
-    const { label } = this.state;
+    const { label, labelMin, labelSec } = this.state;
     event.preventDefault();
-    addItem(label);
-    this.setState({
-      label: ""
-    });
+    if (label !== "" && labelMin !== "" && labelSec !== "") {
+      addItem(label, labelMin, labelSec);
+      this.setState({
+        label: "",
+        labelMin: "",
+        labelSec: ""
+      });
+    }
   };
 
   render() {
     const { placeholder } = this.props;
-    const { label } = this.state;
+    const { label, labelMin, labelSec } = this.state;
     return (
       <form onSubmit={this.onSubmit} className="new-todo-form">
         <input
@@ -43,8 +61,20 @@ export default class NewTaskForm extends Component {
           value={label}
           autoFocus
         />
-        <input className="new-todo-form__timer" placeholder="Min" autoFocus />
-        <input className="new-todo-form__timer" placeholder="Sec" autoFocus />
+        <input
+          className="new-todo-form__timer"
+          placeholder="Min"
+          onChange={(event) => this.onLabelMinChange(event)}
+          autoFocus
+          value={labelMin}
+        />
+        <input
+          className="new-todo-form__timer"
+          placeholder="Sec"
+          onChange={(event) => this.onLabelSecChange(event)}
+          autoFocus
+          value={labelSec}
+        />
         <button type="submit"></button>
       </form>
     );

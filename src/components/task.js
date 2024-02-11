@@ -10,58 +10,65 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable class-methods-use-this */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-lonely-if */
+/* eslint-disable react/no-unused-state */
+/* eslint-disable react/no-access-state-in-setstate */
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { formatDistanceToNow } from "date-fns";
 
 export default class Task extends Component {
-  state = {
-    label: this.props.labelText,
-    second: 0,
-    timerWork: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      label: this.props.labelText,
+      totalTime: 0,
+      timer: null,
+      timerWork: false
+    };
 
-  timer = null;
+    this.tick = () => {
+      // eslint-disable-next-line react/destructuring-assignment
+      if (this.state.totalTime > 0) {
+        this.setState({ timerWork: true });
+        this.setState(({ totalTime }) => ({
+          totalTime: totalTime - 1
+        }));
+      }
+    };
+
+    this.runTick = () => {
+      if (this.state.timerWork) {
+        return;
+      }
+      const timer = setInterval(this.tick, 1000);
+      this.setState({
+        // eslint-disable-next-line react/no-unused-state
+        timer
+      });
+    };
+
+    this.stopTick = () => {
+      if (!this.state.timerWork) {
+        return;
+      }
+      const { timer } = this.state;
+      clearInterval(timer);
+      this.setState({ timerWork: false });
+    };
+  }
 
   componentDidMount() {
-    if (this.state.timerWork) {
-      this.timer = setInterval(() => {
-        this.setState((prevState) => ({
-          second: prevState.second + 1
-        }));
-      }, 1000);
-    }
+    const { timerValue } = this.props;
+    this.setState({
+      totalTime: +timerValue[0] * 60 + +timerValue[1]
+    });
   }
 
   componentWillUnmount() {
-    clearInterval(this.timer);
+    this.stopTick();
   }
-
-  startTimer = () => {
-    if (!this.state.timerWork) {
-      this.setState({ timerWork: true });
-    }
-    this.timer = setInterval(() => {
-      this.setState((prevState) => ({
-        second: prevState.second + 1
-      }));
-    }, 1000);
-  };
-
-  stopTimer = () => {
-    if (this.state.timerWork) {
-      clearInterval(this.timer);
-      this.setState({
-        timerWork: false
-      });
-    }
-  };
-
-  renderTimer = (time) => {
-    const min = Math.floor(time / 60);
-    const sec = time % 60;
-    return `${min < 10 ? "0" : ""}${min} : ${sec < 10 ? "0" : ""}${sec}`;
-  };
 
   onLabelChange = (event) => {
     this.setState({
@@ -73,7 +80,9 @@ export default class Task extends Component {
     const { editingChange, id } = this.props;
     const { label } = this.state;
     event.preventDefault();
-    editingChange(id, label);
+    if (label !== "") {
+      editingChange(id, label);
+    }
   };
 
   render() {
@@ -87,13 +96,22 @@ export default class Task extends Component {
       onChecked,
       onEditing
     } = this.props;
-    const { label, second } = this.state;
+    const { label } = this.state;
+    let { totalTime } = this.state;
 
     let classNames = "";
     if (checked) classNames = "completed";
     if (editing) classNames = "editing";
 
     const result = formatDistanceToNow(date, { includeSeconds: true });
+
+    const min =
+      totalTime % 60 < 10
+        ? `0${Math.floor(totalTime / 60)}`
+        : Math.floor(totalTime / 60);
+    const sec =
+      totalTime % 60 < 10 ? (totalTime = `0${totalTime % 60}`) : totalTime % 60;
+    const timer = `${min}:${sec}`;
 
     return (
       <li className={classNames}>
@@ -111,14 +129,15 @@ export default class Task extends Component {
               <button
                 type="button"
                 className="icon icon-play"
-                onClick={this.startTimer}
+                onClick={this.runTick}
               ></button>
               <button
                 type="button"
                 className="icon icon-pause"
-                onClick={this.stopTimer}
+                onClick={this.stopTick}
               ></button>
-              <span style={{ marginLeft: 7 }}>{this.renderTimer(second)}</span>
+
+              <span style={{ marginLeft: 7 }}>{timer}</span>
             </span>
             <span className="description">created {result} ago</span>
           </label>

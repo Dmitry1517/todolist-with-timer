@@ -4,6 +4,7 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable import/no-named-as-default */
+/* eslint-disable react/prop-types */
 import React from "react";
 import PropTypes from "prop-types";
 import Task from "./task";
@@ -21,6 +22,9 @@ const TaskList = ({
       date={item.date}
       key={item.id}
       labelText={item.label}
+      timerValue={item.timerValue}
+      labelMinText={item.labelMin}
+      labelSecText={item.labelSec}
       checked={item.checked}
       editing={item.editing}
       onDeleted={() => onDeleted(item.id)}

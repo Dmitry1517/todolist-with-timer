@@ -6,34 +6,38 @@
 /* eslint-disable no-undef */
 /* eslint-disable import/extensions */
 /* eslint-disable import/no-unresolved */
-import React, { Component } from 'react';
-import NewTaskForm from './new-task-form';
-import TaskList from './task-list';
-import Footer from './footer';
+import React, { Component } from "react";
+import NewTaskForm from "./new-task-form";
+import TaskList from "./task-list";
+import Footer from "./footer";
 
-import '../style/index.css';
+import "../style/index.css";
 
 export default class App extends Component {
   state = {
     todoData: [],
-    filter: 'All',
+    filter: "All"
   };
 
   maxId = 0;
 
-  onItemAdded = (text) => {
+  onItemAdded = (text, textMin, textSec) => {
+    const timerValue = [textMin, textSec];
     const newItem = {
       id: this.maxId++,
       label: text,
+      labelMin: textMin,
+      labelSec: textSec,
       checked: false,
       editing: false,
       date: new Date(),
+      timerValue
     };
 
     this.setState(({ todoData }) => {
       const newArr = [...todoData, newItem];
       return {
-        todoData: newArr,
+        todoData: newArr
       };
     });
   };
@@ -44,7 +48,7 @@ export default class App extends Component {
       const resArr = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
 
       return {
-        todoData: resArr,
+        todoData: resArr
       };
     });
   };
@@ -57,16 +61,16 @@ export default class App extends Component {
           todoData: [
             ...todoData.slice(0, idx),
             { ...todoData[idx], checked: false },
-            ...todoData.slice(idx + 1),
-          ],
+            ...todoData.slice(idx + 1)
+          ]
         };
       }
       return {
         todoData: [
           ...todoData.slice(0, idx),
           { ...todoData[idx], checked: true },
-          ...todoData.slice(idx + 1),
-        ],
+          ...todoData.slice(idx + 1)
+        ]
       };
     });
   };
@@ -79,8 +83,8 @@ export default class App extends Component {
           todoData: [
             ...todoData.slice(0, idx),
             { ...todoData[idx], editing: true },
-            ...todoData.slice(idx + 1),
-          ],
+            ...todoData.slice(idx + 1)
+          ]
         };
       }
     });
@@ -88,7 +92,7 @@ export default class App extends Component {
 
   taskCounter = () => {
     const filtered = this.state.todoData.filter(
-      (item) => item.checked === false,
+      (item) => item.checked === false
     );
     return filtered.length;
   };
@@ -102,18 +106,16 @@ export default class App extends Component {
         resArr.splice(idx, 1);
       }
       return {
-        todoData: resArr,
+        todoData: resArr
       };
     });
   };
 
   filteredTasks = () => {
     const { todoData, filter } = this.state;
-    if (filter === 'All') return todoData;
-    if (filter === 'Active')
-      return todoData.filter((item) => item.checked === false);
-    if (filter === 'Completed')
-      return todoData.filter((item) => item.checked === true);
+    if (filter === "All") return todoData;
+    if (filter === "Active") return todoData.filter((item) => !item.checked);
+    if (filter === "Completed") return todoData.filter((item) => item.checked);
   };
 
   onFilterChange = (filter) => {
@@ -127,8 +129,8 @@ export default class App extends Component {
         todoData: [
           ...todoData.slice(0, idx),
           { ...todoData[idx], editing: false, label: text },
-          ...todoData.slice(idx + 1),
-        ],
+          ...todoData.slice(idx + 1)
+        ]
       };
     });
   };
