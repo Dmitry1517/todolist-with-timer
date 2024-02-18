@@ -27,6 +27,7 @@
     "no-plusplus": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "no-unused-vars": "off",
-    "arrow-body-style": "off"
+    "arrow-body-style": "off",
+    "import/no-useless-path-segments": "off"
   }
 }

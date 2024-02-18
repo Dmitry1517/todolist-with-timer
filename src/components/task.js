@@ -19,45 +19,40 @@ import PropTypes from "prop-types";
 import { formatDistanceToNow } from "date-fns";
 
 export default class Task extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      label: this.props.labelText,
-      totalTime: 0,
-      timer: null,
-      timerWork: false
-    };
+  state = {
+    label: this.props.labelText,
+    totalTime: 0,
+    timer: null,
+    timerWork: false
+  };
 
-    this.tick = () => {
-      // eslint-disable-next-line react/destructuring-assignment
-      if (this.state.totalTime > 0) {
-        this.setState({ timerWork: true });
-        this.setState(({ totalTime }) => ({
-          totalTime: totalTime - 1
-        }));
-      }
-    };
+  tick = () => {
+    if (this.state.totalTime > 0) {
+      this.setState({ timerWork: true });
+      this.setState(({ totalTime }) => ({
+        totalTime: totalTime - 1
+      }));
+    }
+  };
 
-    this.runTick = () => {
-      if (this.state.timerWork) {
-        return;
-      }
-      const timer = setInterval(this.tick, 1000);
-      this.setState({
-        // eslint-disable-next-line react/no-unused-state
-        timer
-      });
-    };
+  runTick = () => {
+    if (this.state.timerWork) {
+      return;
+    }
+    const timer = setInterval(this.tick, 1000);
+    this.setState({
+      timer
+    });
+  };
 
-    this.stopTick = () => {
-      if (!this.state.timerWork) {
-        return;
-      }
-      const { timer } = this.state;
-      clearInterval(timer);
-      this.setState({ timerWork: false });
-    };
-  }
+  stopTick = () => {
+    if (!this.state.timerWork) {
+      return;
+    }
+    const { timer } = this.state;
+    clearInterval(timer);
+    this.setState({ timerWork: false });
+  };
 
   componentDidMount() {
     const { timerValue } = this.props;
@@ -94,19 +89,21 @@ export default class Task extends Component {
       checked,
       editing,
       onChecked,
-      onEditing
+      onEditing,
+      filter
     } = this.props;
     const { label } = this.state;
     let { totalTime } = this.state;
 
-    let classNames = "";
-    if (checked) classNames = "completed";
-    if (editing) classNames = "editing";
+    let className = checked ? "completed" : "";
+    className += `${editing ? " editing" : ""}`;
+    className += `${filter === "Active" && checked ? " hidden" : ""}`;
+    className += `${filter === "Completed" && !checked ? " hidden" : ""}`;
 
     const result = formatDistanceToNow(date, { includeSeconds: true });
 
     const min =
-      totalTime % 60 < 10
+      totalTime / 60 < 10
         ? `0${Math.floor(totalTime / 60)}`
         : Math.floor(totalTime / 60);
     const sec =
@@ -114,7 +111,7 @@ export default class Task extends Component {
     const timer = `${min}:${sec}`;
 
     return (
-      <li className={classNames}>
+      <li className={className}>
         <div className="view">
           <input
             id={id}

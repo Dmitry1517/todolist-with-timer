@@ -14,7 +14,8 @@ const TaskList = ({
   onDeleted,
   onChecked,
   onEditing,
-  editingChange
+  editingChange,
+  filter
 }) => {
   const elements = todos.map((item) => (
     <Task
@@ -23,16 +24,16 @@ const TaskList = ({
       key={item.id}
       labelText={item.label}
       timerValue={item.timerValue}
-      labelMinText={item.labelMin}
-      labelSecText={item.labelSec}
       checked={item.checked}
       editing={item.editing}
+      filter={filter}
       onDeleted={() => onDeleted(item.id)}
       onChecked={() => onChecked(item.id)}
       onEditing={() => onEditing(item.id)}
       editingChange={editingChange}
     />
   ));
+
   return <ul className="todo-list">{elements}</ul>;
 };
 

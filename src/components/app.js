@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react/state-in-constructor */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable consistent-return */
@@ -21,19 +22,16 @@ export default class App extends Component {
 
   maxId = 0;
 
-  onItemAdded = (text, textMin, textSec) => {
-    const timerValue = [textMin, textSec];
+  onItemAdded = (text, min, sec) => {
+    const timerValue = [min, sec];
     const newItem = {
       id: this.maxId++,
       label: text,
-      labelMin: textMin,
-      labelSec: textSec,
       checked: false,
       editing: false,
       date: new Date(),
       timerValue
     };
-
     this.setState(({ todoData }) => {
       const newArr = [...todoData, newItem];
       return {
@@ -111,13 +109,6 @@ export default class App extends Component {
     });
   };
 
-  filteredTasks = () => {
-    const { todoData, filter } = this.state;
-    if (filter === "All") return todoData;
-    if (filter === "Active") return todoData.filter((item) => !item.checked);
-    if (filter === "Completed") return todoData.filter((item) => item.checked);
-  };
-
   onFilterChange = (filter) => {
     this.setState({ filter });
   };
@@ -136,7 +127,7 @@ export default class App extends Component {
   };
 
   render() {
-    const { filter } = this.state;
+    const { filter, todoData } = this.state;
 
     return (
       <section className="todoapp">
@@ -146,11 +137,12 @@ export default class App extends Component {
         </header>
         <section className="main">
           <TaskList
-            todos={this.filteredTasks()}
+            todos={todoData}
             onDeleted={this.deleteItem}
             onChecked={this.checkItem}
             onEditing={this.editItem}
             editingChange={this.editingChange}
+            filter={filter}
           />
           <Footer
             counter={this.taskCounter}

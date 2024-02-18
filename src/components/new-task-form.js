@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/state-in-constructor */
 /* eslint-disable react/require-default-props */
@@ -39,7 +41,7 @@ export default class NewTaskForm extends Component {
     const { addItem } = this.props;
     const { label, labelMin, labelSec } = this.state;
     event.preventDefault();
-    if (label !== "" && labelMin !== "" && labelSec !== "") {
+    if (label.trim() !== "" && labelMin !== "" && labelSec !== "") {
       addItem(label, labelMin, labelSec);
       this.setState({
         label: "",
@@ -67,6 +69,7 @@ export default class NewTaskForm extends Component {
           onChange={(event) => this.onLabelMinChange(event)}
           autoFocus
           value={labelMin}
+          type="number"
         />
         <input
           className="new-todo-form__timer"
@@ -74,6 +77,7 @@ export default class NewTaskForm extends Component {
           onChange={(event) => this.onLabelSecChange(event)}
           autoFocus
           value={labelSec}
+          type="number"
         />
         <button type="submit"></button>
       </form>
