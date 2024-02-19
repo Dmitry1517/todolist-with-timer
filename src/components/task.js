@@ -1,3 +1,6 @@
+/* eslint-disable no-shadow */
+/* eslint-disable no-useless-return */
+/* eslint-disable no-else-return */
 /* eslint-disable import/extensions */
 /* eslint-disable react/state-in-constructor */
 /* eslint-disable import/no-extraneous-dependencies */
@@ -23,12 +26,11 @@ export default class Task extends Component {
     label: this.props.labelText,
     totalTime: 0,
     timer: null,
-    timerWork: false
+    disabled: false
   };
 
   tick = () => {
     if (this.state.totalTime > 0) {
-      this.setState({ timerWork: true });
       this.setState(({ totalTime }) => ({
         totalTime: totalTime - 1
       }));
@@ -36,22 +38,19 @@ export default class Task extends Component {
   };
 
   runTick = () => {
-    if (this.state.timerWork) {
-      return;
-    }
     const timer = setInterval(this.tick, 1000);
     this.setState({
-      timer
+      timer,
+      disabled: true
     });
   };
 
   stopTick = () => {
-    if (!this.state.timerWork) {
-      return;
-    }
     const { timer } = this.state;
     clearInterval(timer);
-    this.setState({ timerWork: false });
+    this.setState({
+      disabled: false
+    });
   };
 
   componentDidMount() {
@@ -127,13 +126,13 @@ export default class Task extends Component {
                 type="button"
                 className="icon icon-play"
                 onClick={this.runTick}
+                disabled={this.state.disabled}
               ></button>
               <button
                 type="button"
                 className="icon icon-pause"
                 onClick={this.stopTick}
               ></button>
-
               <span style={{ marginLeft: 7 }}>{timer}</span>
             </span>
             <span className="description">created {result} ago</span>
